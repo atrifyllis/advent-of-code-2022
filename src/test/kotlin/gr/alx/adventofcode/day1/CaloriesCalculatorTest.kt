@@ -111,7 +111,6 @@ class CaloriesCalculatorTest {
         assertThat(maxTotalCalories).isEqualTo(53645)
     }
 
-
     @Test
     fun `should read input and calculate correct max`() {
 
@@ -120,5 +119,52 @@ class CaloriesCalculatorTest {
         val maxTotalCalories: Int = calculator.calculateMaxCalories(CALORIES_PER_ELF)
 
         assertThat(maxTotalCalories).isEqualTo(69626)
+    }
+
+    @Test
+    fun `should map calorie entries sums per elf`() {
+        val caloriesPerElf = """
+            1
+            
+            2
+        """.trimIndent()
+
+        val calculator = CaloriesCalculator()
+
+        val listOfSums: List<Int> = calculator.mapCalorieEntriesPerElfToSums(caloriesPerElf)
+
+        assertThat(listOfSums).containsExactlyInAnyOrder(1, 2)
+
+    }
+
+    @Test
+    fun `should map calorie entries sums per elf ordered`() {
+        val caloriesPerElf = """
+            1
+            2
+            
+            2
+            3
+        """.trimIndent()
+
+        val calculator = CaloriesCalculator()
+
+        val listOfSums: List<Int> = calculator.mapCalorieEntriesPerElfToSums(caloriesPerElf)
+
+        assertThat(listOfSums).containsExactly(5, 3)
+
+    }
+
+    @Test
+    fun `should read input and calculate correct the 3 elves with most calories`() {
+
+        val calculator = CaloriesCalculator()
+
+        val entrySums = calculator.mapCalorieEntriesPerElfToSums(CALORIES_PER_ELF)
+
+        assertThat(entrySums[0]).isEqualTo(69626)
+        assertThat(entrySums[1]).isEqualTo(68657)
+        assertThat(entrySums[2]).isEqualTo(68497)
+        assertThat(entrySums[0] + entrySums[1] + entrySums[2]).isEqualTo(206780)
     }
 }
