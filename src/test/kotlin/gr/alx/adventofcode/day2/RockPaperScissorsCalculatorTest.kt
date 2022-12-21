@@ -44,4 +44,14 @@ class RockPaperScissorsCalculatorTest {
 
         assertThat(score).isEqualTo(14264)
     }
+
+    @Test
+    fun `should calculate alternate score for input`() {
+
+        val input = ReadInputHelper.readLinesFromResource("/day2/rock_paper_scissors_input.txt")
+
+        val score: Int = RockPaperScissorsCalculator().calculateAltScore(input)
+
+        assertThat(score).isEqualTo(11732)
+    }
 }
