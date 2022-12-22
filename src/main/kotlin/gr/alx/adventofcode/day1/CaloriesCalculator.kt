@@ -8,10 +8,12 @@ class CaloriesCalculator {
             .max()
     }
 
-    fun mapCalorieEntriesPerElfToSums(caloriesPerElf: String): List<Int> {
+    fun retrieveSumOfFirstThreeMaxCalories(caloriesPerElf: String): Int {
         return splitCaloriesPerElf(caloriesPerElf)
             .map { mapEntriesToSums(it) }
             .sortedDescending()
+            .take(3)
+            .sum()
 
     }
 

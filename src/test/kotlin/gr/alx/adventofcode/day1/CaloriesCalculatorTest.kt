@@ -122,7 +122,7 @@ class CaloriesCalculatorTest {
     }
 
     @Test
-    fun `should map calorie entries sums per elf`() {
+    fun `should sum two elves `() {
         val caloriesPerElf = """
             1
             
@@ -131,14 +131,14 @@ class CaloriesCalculatorTest {
 
         val calculator = CaloriesCalculator()
 
-        val listOfSums: List<Int> = calculator.mapCalorieEntriesPerElfToSums(caloriesPerElf)
+        val sum: Int = calculator.retrieveSumOfFirstThreeMaxCalories(caloriesPerElf)
 
-        assertThat(listOfSums).containsExactlyInAnyOrder(1, 2)
+        assertThat(sum).isEqualTo(3)
 
     }
 
     @Test
-    fun `should map calorie entries sums per elf ordered`() {
+    fun `should sum two elves with two calorie entries`() {
         val caloriesPerElf = """
             1
             2
@@ -149,22 +149,19 @@ class CaloriesCalculatorTest {
 
         val calculator = CaloriesCalculator()
 
-        val listOfSums: List<Int> = calculator.mapCalorieEntriesPerElfToSums(caloriesPerElf)
+        val sum: Int = calculator.retrieveSumOfFirstThreeMaxCalories(caloriesPerElf)
 
-        assertThat(listOfSums).containsExactly(5, 3)
+        assertThat(sum).isEqualTo(8)
 
     }
 
     @Test
-    fun `should read input and calculate correct the 3 elves with most calories`() {
+    fun `should read input and sum 3 top elves`() {
 
         val calculator = CaloriesCalculator()
 
-        val entrySums = calculator.mapCalorieEntriesPerElfToSums(CALORIES_PER_ELF)
+        val sum = calculator.retrieveSumOfFirstThreeMaxCalories(CALORIES_PER_ELF)
 
-        assertThat(entrySums[0]).isEqualTo(69626)
-        assertThat(entrySums[1]).isEqualTo(68657)
-        assertThat(entrySums[2]).isEqualTo(68497)
-        assertThat(entrySums[0] + entrySums[1] + entrySums[2]).isEqualTo(206780)
+        assertThat(sum).isEqualTo(206780)
     }
 }
