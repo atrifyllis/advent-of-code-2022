@@ -34,12 +34,51 @@ class RucksackTest {
     }
 
     @Test
-    fun `should find sum of duplicate priorities'`() {
+    fun `should find sum of duplicate priorities`() {
         val rucksacks = ReadInputHelper.readLinesFromResource("/day3/rucksack.txt")
 
         val sum = RucksackCalculator().sumDuplicatePriorities(rucksacks)
 
         assertThat(sum).isEqualTo(7821)
+    }
+
+    @Test
+    fun `should split to groups of three`() {
+        val rucksacks = """
+           vJrwpWtwJgWrhcsFMMfFFhFp
+           jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+           PmmdzqPrVvPwwTWBwg
+           wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+           ttgJtRGJQctTZtZT
+           CrZsJsPPZsGzwwsLwLmpwMDw
+        """.trimIndent()
+
+        val groups: List<List<String>> = RucksackCalculator().splitToGroups(rucksacks.lines())
+
+        assertThat(groups).hasSize(2)
+
+        assertThat(groups[0]).hasSize(3)
+        assertThat(groups[0]).containsExactly("vJrwpWtwJgWrhcsFMMfFFhFp", "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL", "PmmdzqPrVvPwwTWBwg")
+
+
+        assertThat(groups[1]).hasSize(3)
+        assertThat(groups[1]).containsExactly("wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn", "ttgJtRGJQctTZtZT", "CrZsJsPPZsGzwwsLwLmpwMDw")
+    }
+
+    @Test
+    fun `should find badge item in group`() {
+        val item: Char = RucksackCalculator().findBadge(listOf("vJrwpWtwJgWrhcsFMMfFFhFp", "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL", "PmmdzqPrVvPwwTWBwg"))
+
+        assertThat(item).isEqualTo('r')
+    }
+
+    @Test
+    fun `should sum badge priorities`() {
+        val rucksacks = ReadInputHelper.readLinesFromResource("/day3/rucksack.txt")
+
+        val sum: Int = RucksackCalculator().sumBadgePriorities(rucksacks)
+
+        assertThat(sum).isEqualTo(2752)
     }
 }
 

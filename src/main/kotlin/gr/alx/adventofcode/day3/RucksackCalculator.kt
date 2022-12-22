@@ -23,4 +23,22 @@ class RucksackCalculator {
             .sumOf { it.priority() }
     }
 
+    fun splitToGroups(rucksacks: List<String>): List<List<String>> {
+        return rucksacks.chunked(3)
+    }
+
+    fun findBadge(group: List<String>): Char {
+        return group[0].filter { group[1].contains(it) }
+            .find { group[2].contains(it) } ?: '0'
+    }
+
+    fun sumBadgePriorities(rucksacks: List<String>): Int {
+        return splitToGroups(rucksacks)
+            .map { findBadge(it) }
+            .sumOf { it.priority() }
+    }
+
+
 }
+
+
