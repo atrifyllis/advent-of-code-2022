@@ -23,5 +23,16 @@ class CleanupCalculator {
         return lines.count { hasOverlappingSectionRanges(it) }
     }
 
+    fun hasPartiallyOverlappingSectionRanges(pairOfSections: String): Boolean {
+        val expandToSections: List<List<Int>> = expandToSections(pairOfSections)
+
+        return expandToSections[0].any { expandToSections[1].contains(it) }
+                || expandToSections[1].any { expandToSections[0].contains(it) }
+    }
+
+    fun sumUpPartiallyOverlappingSectionRanges(sectionRanges: List<String>): Int {
+        return sectionRanges.count { hasPartiallyOverlappingSectionRanges(it) }
+    }
+
 
 }

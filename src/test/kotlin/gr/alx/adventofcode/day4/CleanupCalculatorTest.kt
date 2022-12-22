@@ -73,4 +73,24 @@ class CleanupCalculatorTest {
         assertThat(sum).isEqualTo(644)
 
     }
+
+    @Test
+    fun `should find partially overlapping section ranges`() {
+
+        val input = "2-4,2-8"
+
+        val isOverlapping: Boolean = CleanupCalculator().hasPartiallyOverlappingSectionRanges(input)
+
+        assertThat(isOverlapping).isTrue
+    }
+
+    @Test
+    fun `should sum up partially overlapping section ranges for input`() {
+        val sectionRanges = ReadInputHelper.readLinesFromResource("/day4/cleanup.txt")
+
+        val sum: Int = CleanupCalculator().sumUpPartiallyOverlappingSectionRanges(sectionRanges)
+
+        assertThat(sum).isEqualTo(644)
+
+    }
 }
