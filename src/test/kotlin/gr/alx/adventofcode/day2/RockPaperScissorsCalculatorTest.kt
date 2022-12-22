@@ -52,6 +52,6 @@ class RockPaperScissorsCalculatorTest {
 
         val score: Int = RockPaperScissorsCalculator().calculateAltScore(input)
 
-        assertThat(score).isEqualTo(11732)
+        assertThat(score).isEqualTo(12382)
     }
 }
