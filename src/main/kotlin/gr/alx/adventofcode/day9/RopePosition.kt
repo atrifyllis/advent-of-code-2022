@@ -11,41 +11,39 @@ data class RopePosition(
         if (dx != 0) {
             val inc = if (dx > 0) 1 else -1
             for (i in 1..abs(dx)) {
-                moveHead(inc, 0)
-                handleTail(inc, 0)
+                head = moveKnot(inc, 0, head)
+                tail = handleTrailingKnot(inc, 0, head, tail)
             }
         } else if (dy != 0) {
             val inc = if (dy > 0) 1 else -1
             for (i in 1..abs(dy)) {
-                moveHead(0, inc)
-                handleTail(0, inc)
+                head = moveKnot(0, inc, head)
+                tail = handleTrailingKnot(0, inc, head, tail)
             }
         }
         return this
     }
 
-    private fun handleTail(x: Int, y: Int) {
-        if (!tail.isAdjacent(head)) {
-            moveTail(x, y)
+    private fun handleTrailingKnot(x: Int, y: Int, head: Position, tail: Position): Position {
+        var newTail = tail
+        if (!newTail.isAdjacent(head)) {
+            newTail = moveKnot(x, y, newTail)
             // handles diagonal adjacency where tail must move in both directions
-            if (tail.x != head.x && tail.y != head.y) {
+            if (newTail.x != head.x && newTail.y != head.y) {
                 if (x != 0) {
-                    moveTail(0, head.y - tail.y)
+                    newTail = moveKnot(0, head.y - newTail.y, newTail)
                 }
                 if (y != 0) {
-                    moveTail(head.x - tail.x, 0)
+                    newTail = moveKnot(head.x - newTail.x, 0, newTail)
                 }
             }
-            visited.add(tail)
+            visited.add(newTail)
         }
+        return newTail
     }
 
-    private fun moveHead(x: Int, y: Int) {
-        head = Position(head.x + x, head.y + y)
-    }
-
-    private fun moveTail(x: Int, y: Int) {
-        tail = Position(tail.x + x, tail.y + y)
+    private fun moveKnot(x: Int, y: Int, pos: Position): Position {
+        return Position(pos.x + x, pos.y + y)
     }
 }
 
