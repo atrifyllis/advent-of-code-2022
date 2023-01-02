@@ -29,4 +29,14 @@ class RopeMover {
         return ropePosition
     }
 
+    fun moveAll(move: List<String>): RopePosition2 {
+        val ropePosition = RopePosition2()
+        move.forEach {
+            val (dx, dy) = parseMove(it)
+
+            ropePosition.moveKnots(dx, dy)
+        }
+        return ropePosition
+    }
+
 }

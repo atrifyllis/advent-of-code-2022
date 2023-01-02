@@ -2,29 +2,34 @@ package gr.alx.adventofcode.day9
 
 import kotlin.math.abs
 
-data class RopePosition(
-    var head: Position = Position(),
-    var tail: Position = Position(),
+data class RopePosition2(
+    var knots: MutableList<Position> = (1..10).map { Position() }.toMutableList(),
     var visited: MutableSet<Position> = mutableSetOf(Position()),
 ) {
-    fun move(dx: Int, dy: Int): RopePosition {
+
+    fun moveKnots(dx: Int, dy: Int): RopePosition2 {
         if (dx != 0) {
             val inc = if (dx > 0) 1 else -1
             for (i in 1..abs(dx)) {
-                head = moveKnot(inc, 0, head)
-                tail = handleTrailingKnot(inc, 0, head, tail)
+                knots[0] = moveKnot(inc, 0, knots[0])
+                for (i in 0..8) {
+                    knots[i + 1] = handleTrailingKnots(inc, 0, knots[i], knots[i + 1], i)
+                }
             }
         } else if (dy != 0) {
             val inc = if (dy > 0) 1 else -1
             for (i in 1..abs(dy)) {
-                head = moveKnot(0, inc, head)
-                tail = handleTrailingKnot(0, inc, head, tail)
+                knots[0] = moveKnot(0, inc, knots[0])
+                for (i in 0..8) {
+                    knots[i + 1] = handleTrailingKnots(0, inc, knots[i], knots[i + 1], i)
+                }
             }
         }
         return this
     }
 
-    private fun handleTrailingKnot(x: Int, y: Int, head: Position, tail: Position): Position {
+
+    private fun handleTrailingKnots(x: Int, y: Int, head: Position, tail: Position, i: Int): Position {
         var newTail = tail
         if (!newTail.isAdjacent(head)) {
             newTail = moveKnot(x, y, newTail)
@@ -37,19 +42,17 @@ data class RopePosition(
                     newTail = moveKnot(head.x - newTail.x, 0, newTail)
                 }
             }
-            visited.add(newTail)
+            println("i+1: ${i + 1} -- knots.size - 1: ${knots.size - 1}")
+            if (i + 1 == knots.size - 1) {
+                visited.add(newTail)
+            }
         }
         return newTail
     }
 
-    private fun moveKnot(x: Int, y: Int, pos: Position): Position {
-        return Position(pos.x + x, pos.y + y)
+    private fun moveKnot(x: Int, y: Int, knot: Position): Position {
+        return Position(knot.x + x, knot.y + y)
     }
 }
 
-data class Position(var x: Int = 0, var y: Int = 0) {
-    fun isAdjacent(other: Position): Boolean {
-        return abs(this.x - other.x) <= 1
-                && abs(this.y - other.y) <= 1
-    }
-}
+
