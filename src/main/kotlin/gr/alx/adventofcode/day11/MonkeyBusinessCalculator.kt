@@ -1,5 +1,7 @@
 package gr.alx.adventofcode.day11
 
+import java.math.BigInteger
+
 class MonkeyBusinessCalculator {
     fun parse(lines: List<String>): List<Instruction> {
         return lines
@@ -9,15 +11,15 @@ class MonkeyBusinessCalculator {
 
     }
 
-    fun calculateInspectedItems(lines: List<String>, rounds: Int): Long {
-        val itemsPerMonkey: MutableMap<Long, MutableList<Long>> = mutableMapOf()
-        var inspectedPerMonkey: MutableMap<Long, Long> = mutableMapOf()
+    fun calculateInspectedItems(lines: List<String>, rounds: Int, divisor: Long): BigInteger {
+        val itemsPerMonkey: MutableMap<BigInteger, MutableList<BigInteger>> = mutableMapOf()
+        var inspectedPerMonkey: MutableMap<BigInteger, BigInteger> = mutableMapOf()
         val instructions = parse(lines)
         instructions.forEach {
             itemsPerMonkey[it.monkey] = it.itemLevels
         }
         repeat(rounds) {
-            inspectedPerMonkey = calculateRound(instructions, itemsPerMonkey, inspectedPerMonkey).second
+            inspectedPerMonkey = calculateRound(instructions, itemsPerMonkey, inspectedPerMonkey, divisor).second
         }
         return inspectedPerMonkey.values
             .sortedDescending()
@@ -26,9 +28,9 @@ class MonkeyBusinessCalculator {
     }
 
 
-    fun calculate(lines: List<String>, rounds: Int): Map<Long, List<Long>> {
-        var itemsPerMonkey: MutableMap<Long, MutableList<Long>> = mutableMapOf()
-        val inspectedPerMonkey: MutableMap<Long, Long> = mutableMapOf()
+    fun calculate(lines: List<String>, rounds: Int): Map<BigInteger, List<BigInteger>> {
+        var itemsPerMonkey: MutableMap<BigInteger, MutableList<BigInteger>> = mutableMapOf()
+        val inspectedPerMonkey: MutableMap<BigInteger, BigInteger> = mutableMapOf()
         val instructions = parse(lines)
         instructions.forEach {
             itemsPerMonkey[it.monkey] = it.itemLevels
@@ -42,16 +44,17 @@ class MonkeyBusinessCalculator {
 
     private fun calculateRound(
         instructions: List<Instruction>,
-        itemsPerMonkey: MutableMap<Long, MutableList<Long>>,
-        inspectedPerMonkey: MutableMap<Long, Long>,
-    ): Pair<MutableMap<Long, MutableList<Long>>, MutableMap<Long, Long>> {
+        itemsPerMonkey: MutableMap<BigInteger, MutableList<BigInteger>>,
+        inspectedPerMonkey: MutableMap<BigInteger, BigInteger>,
+        divisor: Long = 3,
+    ): Pair<MutableMap<BigInteger, MutableList<BigInteger>>, MutableMap<BigInteger, BigInteger>> {
         instructions.forEach { instruction ->
             val currentMonkey = instruction.monkey
             val currentItems = itemsPerMonkey[currentMonkey]
             currentItems?.forEach { itemLevel ->
-                inspectedPerMonkey[currentMonkey] = (inspectedPerMonkey[currentMonkey] ?: 0) + 1
-                val newWorryLevel: Long = instruction.calculateWorryLevel(itemLevel)
-                val monkeyToThrowTo: Long = instruction.calculateMonkeyToThrowTo(newWorryLevel)
+                inspectedPerMonkey[currentMonkey] = (inspectedPerMonkey[currentMonkey] ?: BigInteger.ZERO) + BigInteger.ONE
+                val newWorryLevel: BigInteger = instruction.calculateWorryLevel(itemLevel, divisor)
+                val monkeyToThrowTo: BigInteger = instruction.calculateMonkeyToThrowTo(newWorryLevel)
                 itemsPerMonkey[monkeyToThrowTo]?.add(newWorryLevel)
             }
             // empty current monkey list
@@ -63,29 +66,37 @@ class MonkeyBusinessCalculator {
 
 
 data class Instruction(
-    val monkey: Long,
-    val itemLevels: MutableList<Long>,
-    val worryOperand: Long,
+    val monkey: BigInteger,
+    val itemLevels: MutableList<BigInteger>,
+    val worryOperand: BigInteger,
     val worryOperation: Op,
-    val divisibleBy: Long,
-    val throwToWhenTrue: Long,
-    val throwToWhenFalse: Long,
+    val divisibleBy: BigInteger,
+    val throwToWhenTrue: BigInteger,
+    val throwToWhenFalse: BigInteger,
 
     ) {
-    fun calculateWorryLevel(itemLevel: Long): Long {
+    fun calculateWorryLevel(itemLevel: BigInteger, divisor: Long): BigInteger {
         val worryLevelAfterInspection = worryOperation.performOperation(itemLevel, worryOperand)
-        return Math.floorDiv(worryLevelAfterInspection, 3)
+        val floorDiv = floorDiv(worryLevelAfterInspection, BigInteger.valueOf(divisor))
+//        println("$worryLevelAfterInspection / ${BigInteger.valueOf(divisor)} = $floorDiv")
+        return floorDiv
     }
 
-    fun calculateMonkeyToThrowTo(newWorryLevel: Long): Long {
+    fun calculateMonkeyToThrowTo(newWorryLevel: BigInteger): BigInteger {
         return if (newWorryLevel.toInt() % divisibleBy.toInt() == 0) throwToWhenTrue else throwToWhenFalse
+    }
+
+    fun floorDiv(a: BigInteger, b: BigInteger): BigInteger {
+        // divideAndRemainder returns quotient and remainder in array
+        val qr = a.divideAndRemainder(b)
+        return if (qr[0].signum() >= 0 || qr[1].signum() == 0) qr[0] else qr[0].subtract(BigInteger.ONE)
     }
 }
 
 enum class Op {
     ADD, MULTI, MULTI_SELF;
 
-    fun performOperation(itemLevel: Long, worryOperand: Long): Long {
+    fun performOperation(itemLevel: BigInteger, worryOperand: BigInteger): BigInteger {
         return when (this) {
             MULTI -> itemLevel * worryOperand
             ADD -> itemLevel + worryOperand

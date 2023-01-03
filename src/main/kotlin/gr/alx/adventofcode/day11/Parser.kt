@@ -1,18 +1,20 @@
 package gr.alx.adventofcode.day11
 
+import java.math.BigInteger
+
 class Parser {
 
     companion object {
         fun toInstruction(instr: List<String>): Instruction {
             val (_, monkey) = instr[0].split(" ")
-            val items: MutableList<Long> = parseItems(instr[1])
+            val items: MutableList<BigInteger> = parseItems(instr[1])
             val (operation, operand) = parseOperation(instr[2])
-            val test: Long = parseTest(instr[3])
-            val throwToTrue: Long = parseTestResult(instr[4])
-            val throwToFalse: Long = parseTestResult(instr[5])
+            val test: BigInteger = parseTest(instr[3])
+            val throwToTrue: BigInteger = parseTestResult(instr[4])
+            val throwToFalse: BigInteger = parseTestResult(instr[5])
 
             return Instruction(
-                monkey = monkey.removeSuffix(":").toLong(),
+                monkey = monkey.removeSuffix(":").toBigInteger(),
                 itemLevels = items,
                 worryOperation = operation,
                 worryOperand = operand,
@@ -24,37 +26,37 @@ class Parser {
         }
 
 
-        private fun parseItems(itemsLine: String): MutableList<Long> {
+        private fun parseItems(itemsLine: String): MutableList<BigInteger> {
             val (_, items) = itemsLine.split(": ")
-            return items.split(", ").map { it.toLong() }.toMutableList()
+            return items.split(", ").map { it.toBigInteger() }.toMutableList()
         }
 
-        private fun parseOperation(multiplierLine: String): Pair<Op, Long> {
+        private fun parseOperation(multiplierLine: String): Pair<Op, BigInteger> {
             return when {
                 multiplierLine.contains("old * old") -> {
-                    Pair(Op.MULTI_SELF, -1)
+                    Pair(Op.MULTI_SELF, BigInteger("-1"))
                 }
 
                 multiplierLine.contains("*") -> {
                     val (_, operand) = multiplierLine.split(" * ")
-                    Pair(Op.MULTI, operand.toLong())
+                    Pair(Op.MULTI, operand.toBigInteger())
                 }
 
                 else -> {
                     val (_, operand) = multiplierLine.split(" + ")
-                    Pair(Op.ADD, operand.toLong())
+                    Pair(Op.ADD, operand.toBigInteger())
                 }
             }
         }
 
-        private fun parseTest(testLine: String): Long {
+        private fun parseTest(testLine: String): BigInteger {
             val (_, test) = testLine.split("by ")
-            return test.toLong()
+            return test.toBigInteger()
         }
 
-        private fun parseTestResult(throwToLine: String): Long {
+        private fun parseTestResult(throwToLine: String): BigInteger {
             val (_, throwTo) = throwToLine.split("monkey ")
-            return throwTo.toLong()
+            return throwTo.toBigInteger()
         }
 
     }
